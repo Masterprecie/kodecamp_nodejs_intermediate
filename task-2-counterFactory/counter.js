@@ -1,4 +1,4 @@
-// Step 2: Create CounterPrototype
+// Counter Prototype
 const CounterPrototype = {
   increment() {
     throw new Error("Not implemented");
@@ -14,22 +14,37 @@ const CounterPrototype = {
   },
 };
 
-// Step 3 & 4: Factory function with private count using closure
-function createCounter(initialValue = 0) {
+// factory function that uses closures to maintain private state.
+export function createCounter(initialValue = 0) {
   let count = initialValue;
   const originalValue = initialValue;
   let onChangeCallback = null;
+  const history = [];
+
+  //modified to include history tracking
+  const recordHistory = (operation, oldValue, newValue) => {
+    history.push({
+      operation,
+      oldValue,
+      newValue,
+      timestamp: new Date().toISOString(),
+    });
+  };
 
   const counter = Object.create(CounterPrototype);
 
   counter.increment = () => {
+    const oldValue = count;
     count += 1;
+    recordHistory("increment", oldValue, count);
     if (onChangeCallback) onChangeCallback(count, "increment");
     return count;
   };
 
   counter.decrement = () => {
+    const oldValue = count;
     count -= 1;
+    recordHistory("decrement", oldValue, count);
     if (onChangeCallback) onChangeCallback(count, "decrement");
     return count;
   };
@@ -37,47 +52,56 @@ function createCounter(initialValue = 0) {
   counter.getValue = () => count;
 
   counter.reset = () => {
+    const oldValue = count;
     count = originalValue;
+    recordHistory("reset", oldValue, count);
     return count;
   };
 
-  // Step 5.1: Higher-order transform
+  //Higher-order transform
   counter.transform = (transformFn) => {
+    const oldValue = count;
     count = transformFn(count);
+    recordHistory("transform", oldValue, count);
     return count;
   };
 
-  // Step 5.2: createPredicate
+  // Create Predicate method
   counter.createPredicate = () => (threshold) => count >= threshold;
 
-  // Step 5.3: onChange callback
+  // onChange callback
   counter.onChange = (callback) => {
     onChangeCallback = callback;
     return counter;
   };
 
-  // Step 6: Immutable methods
+  // Immutable methods
   counter.add = (value) => createCounter(count + value);
   counter.subtract = (value) => createCounter(count - value);
   counter.multiply = (value) => createCounter(count * value);
 
   counter.snapshot = () => createCounter(count);
 
-  // Step 7: Batch operation
+  // Batch operation method
   counter.batch = ({ increments = 0, decrements = 0 } = {}) => {
+    const oldValue = count;
     count += increments;
     count -= decrements;
+    recordHistory("batch", oldValue, count);
     return count;
   };
 
-  // Step 7.3: toString method
+  // toString method
   counter.toString = () => `Counter current value is: ${count}`;
+
+  // History tracking
+  counter.getHistory = () => [...history];
 
   return counter;
 }
 
-// Step 8: createAdvancedCounter
-function createAdvancedCounter({
+//  Advanced Counter Factory
+export function createAdvancedCounter({
   initialValue = 0,
   step = 1,
   min = -Infinity,
@@ -111,5 +135,3 @@ function createAdvancedCounter({
 
   return counter;
 }
-
-module.exports = { createCounter, createAdvancedCounter };
