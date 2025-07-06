@@ -1,0 +1,13 @@
+{
+  "name": "calculator-app",
+  "description": "This is a simple calculator app built with Node.js. It allows users to perform basic arithmetic operations interactively.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Precious Ikpa",
+  "license": "MIT"
+}
