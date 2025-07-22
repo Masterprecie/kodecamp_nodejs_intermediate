@@ -2,12 +2,19 @@
   "name": "calculator-app",
   "description": "This is a simple calculator app built with Node.js. It allows users to perform basic arithmetic operations interactively.",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/calculator.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node dist/calculator.js",
+    "dev": "ts-node src/calculator.ts"
   },
   "keywords": [],
   "author": "Precious Ikpa",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
 }
